@@ -1,0 +1,15 @@
+services:
+    db:
+        image: postgis/postgis:16-3.4
+        environment:
+            POSTGRES_USER: plots
+            POSTGRES_PASSWORD: plots
+            POSTGRES_DB: plots
+        ports: ["5432:5432"]
+    api:
+        build: .
+        environment:
+            DATABASE_URL: postgresql://plots:plots@db/plots
+            PLOT_CHECK_API_KEYS: dev-key:demo-roaster
+        ports: ["8000:8000"]
+        depends_on: [db]
