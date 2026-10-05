@@ -81,6 +81,17 @@ def test_issues_csv_is_a_fix_list_for_the_supplier(conn: psycopg.Connection[Any]
     ]
 
 
+def test_plots_come_back_as_geojson_with_their_status(conn: psycopg.Connection[Any]) -> None:
+    c = client()
+    report_id = upload(c).json()["id"]
+    response = c.get(f"/farm-lists/{report_id}/plots.geojson", headers={"Authorization": "Bearer key-roaster"})
+    assert response.headers["content-type"] == "application/geo+json"
+    features = response.json()["features"]
+    assert [f["properties"]["farm_id"] for f in features] == ["F-001", "F-002", "F-003", "F-004", "F-005"]
+    assert {f["geometry"]["type"] for f in features} == {"Polygon"}  # points are returned as their assessed footprint
+    assert features[3]["properties"]["issues"] == "POLYGON_REQUIRED"
+
+
 def test_reports_are_private_to_the_customer(conn: psycopg.Connection[Any]) -> None:
     c = client()
     report_id = upload(c).json()["id"]
