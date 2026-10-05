@@ -37,6 +37,7 @@ def assess(conn: Connection[Any], filename: str, data: bytes) -> tuple[dict[str,
                 issues=issues,
                 area_ha=checked.area_ha if checked else None,
                 deforested_ha=deforested,
+                geometry=checked.geometry if checked else None,
             )
         )
     statuses = Counter(r.status for r in results)

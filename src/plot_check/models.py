@@ -49,3 +49,4 @@ class PlotResult(BaseModel):
     issues: list[Issue]
     area_ha: float | None = None
     deforested_ha: float | None = None
+    geometry: dict[str, Any] | None = None

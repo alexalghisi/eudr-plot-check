@@ -26,6 +26,7 @@ class GeometryResult:
     issues: list[Issue] = field(default_factory=list)
     area_ha: float | None = None
     deforested_ha: float | None = None
+    geometry: dict[str, Any] | None = None  # the geometry that was assessed: repaired polygon, or a point's footprint
 
 
 def _warning(code: str, message: str, field_name: str = "geometry") -> Issue:
@@ -188,5 +189,6 @@ class GeometryChecks:
             (self._cutoff,),
         ).fetchall()
         lost = {row: hectares for row, hectares in rows}
-        for row in self._conn.execute("SELECT row FROM plots_in").fetchall():
-            results[row[0]].deforested_ha = round(lost.get(row[0], 0.0), 4)
+        for row, geometry in self._conn.execute("SELECT row, ST_AsGeoJSON(footprint, 6) FROM plots_in").fetchall():
+            results[row].deforested_ha = round(lost.get(row, 0.0), 4)
+            results[row].geometry = json.loads(geometry)
