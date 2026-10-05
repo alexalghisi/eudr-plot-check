@@ -65,7 +65,7 @@ curl -H "Authorization: Bearer dev-key" localhost:8000/farm-lists/<id>/issues.cs
 curl -H "Authorization: Bearer dev-key" localhost:8000/farm-lists/<id>/plots.geojson
 ```
 
-Farm lists are CSV, with `farm_id`, `country` (ISO alpha-2), `latitude`/`longitude` or a WKT `polygon` in lon lat order, and an optional `area_ha`. GeoJSON FeatureCollections are also accepted, including the `ProducerName`, `ProducerCountry` and `Area` property names used in EU information system exports.
+Farm lists are CSV, with `farm_id`, `country` (ISO alpha-2), `latitude`/`longitude` or a WKT `polygon` in lon lat order, and an optional `area_ha`. GeoJSON FeatureCollections are also accepted, including the `ProducerName`, `ProducerCountry` and `Area` property names found in common EUDR GeoJSON templates.
 
 Forest loss layers are GeoJSON polygons with a `detected_on` date.
 
