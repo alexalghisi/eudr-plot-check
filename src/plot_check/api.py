@@ -5,6 +5,7 @@ No `from __future__ import annotations` here: FastAPI resolves the dependency an
 
 import csv
 import io
+import json
 import os
 from collections.abc import Iterator
 from typing import Annotated, Any
@@ -66,6 +67,32 @@ def create_app(database_url: str, api_keys: dict[str, str]) -> FastAPI:
         if found is None:
             raise HTTPException(status.HTTP_404_NOT_FOUND, "report not found")
         return found
+
+    @app.get("/farm-lists/{report_id}/plots.geojson")
+    def plots_geojson(report_id: str, conn: Conn, who: Customer) -> Response:
+        """Every assessed plot with its status and issues, to open in QGIS or any web map."""
+        found = load_report(conn, who, report_id)
+        if found is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "report not found")
+        features = [
+            {
+                "type": "Feature",
+                "geometry": result["geometry"],
+                "properties": {
+                    "row": result["row"],
+                    "farm_id": result["farm_id"],
+                    "status": result["status"],
+                    "area_ha": result["area_ha"],
+                    "deforested_ha": result["deforested_ha"],
+                    "issues": ", ".join(issue["code"] for issue in result["issues"]),
+                },
+            }
+            for result in found["results"]
+            if result.get("geometry") is not None
+        ]
+        return Response(
+            json.dumps({"type": "FeatureCollection", "features": features}), media_type="application/geo+json"
+        )
 
     @app.get("/farm-lists/{report_id}/issues.csv")
     def issues_csv(report_id: str, conn: Conn, who: Customer) -> Response:
