@@ -2,6 +2,8 @@
 
 Under the EU Deforestation Regulation (EUDR), every lot of coffee, cocoa and other covered commodities has to be traceable to the plots of land it was grown on, with proof that no deforestation happened there after 31 December 2020. In practice that means customers send in farm lists: spreadsheets and GeoJSON exports from cooperatives, of very mixed quality.
 
+**Download:** [latest release](https://github.com/alexalghisi/eudr-plot-check/releases/latest)
+
 This service reads those lists, finds what's wrong with each plot in a way a supplier can act on, and checks every usable plot against tree cover loss data in PostGIS.
 
 ![Checking an example farm list from the CLI and the API, then the plots on a map](docs/preview.gif)
